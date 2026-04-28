@@ -1,0 +1,56 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Load prices
+prices = pd.read_csv('Day-ahead_prices_202001010000_202501012000_Hour.csv',
+                     sep=';', decimal=',')
+
+# Rename the key column for easier use
+prices = prices.rename(columns={
+    'Germany/Luxembourg [€/MWh] Calculated resolutions': 'price_DE',
+    'Start date': 'timestamp'
+})
+
+# Convert timestamp to datetime
+prices['timestamp'] = pd.to_datetime(prices['timestamp'])
+prices = prices.set_index('timestamp')
+
+# Basic statistics
+print("Basic statistics for German electricity prices 2020-2024:")
+print(prices['price_DE'].describe())
+print()
+print(f"Maximum price: {prices['price_DE'].max():.2f} €/MWh")
+print(f"When: {prices['price_DE'].idxmax()}")
+print()
+print(f"Minimum price: {prices['price_DE'].min():.2f} €/MWh")
+print(f"When: {prices['price_DE'].idxmin()}")
+
+# Plot the full price history
+plt.figure(figsize=(14, 6))
+prices['price_DE'].plot(color='steelblue', linewidth=0.5)
+plt.title('German Day-Ahead Electricity Prices 2020-2024', fontsize=14)
+plt.ylabel('Price [€/MWh]')
+plt.xlabel('Date')
+plt.axhline(y=0, color='red', linestyle='--', linewidth=0.8, label='Zero price')
+plt.legend()
+plt.tight_layout()
+plt.savefig('price_history.png', dpi=150)
+plt.show()
+print("Chart saved as price_history.png")import pandas as pd
+import matplotlib.pyplot as plt
+
+# Load the three files
+prices = pd.read_csv('Day-ahead_prices_202001010000_202501012000_Hour.csv', 
+                     sep=';', decimal=',')
+generation = pd.read_csv('Actual_generation_202001010000_202501012000_Hour.csv', 
+                         sep=';', decimal=',')
+consumption = pd.read_csv('Actual_consumption_202001010000_202501012000_Hour.csv', 
+                          sep=';', decimal=',')
+
+# See what we have
+print("PRICES:")
+print(prices.head())
+print(prices.shape)
+print()
+print("COLUMNS:")
+print(prices.columns.tolist())
